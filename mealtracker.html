@@ -1,0 +1,1053 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meal Tracker | Fitness Freak</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Reuse your existing CSS variables and base styles */
+        :root {
+            --primary: #ff0036;
+            --primary-dark: #cc002b;
+            --primary-light: #ff3358;
+            --secondary: #1a1a1a;
+            --text-light: #ffffff;
+            --text-dark: #333333;
+            --bg-light: #f8f9fa;
+            --bg-dark: #121212;
+            --card-light: #ffffff;
+            --card-dark: #1e1e1e;
+            --transition: all 0.3s ease;
+        }
+
+        .light-theme {
+            --bg: var(--bg-light);
+            --text: var(--text-dark);
+            --card: var(--card-light);
+        }
+
+        .dark-theme {
+            --bg: var(--bg-dark);
+            --text: var(--text-light);
+            --card: var(--card-dark);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            transition: var(--transition);
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* Header & Navigation */
+        header {
+            background-color: var(--primary);
+            padding: 1rem 2rem;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: white;
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        .logo i {
+            color: white;
+            animation: pulse 2s infinite;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 1.5rem;
+        }
+
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            position: relative;
+            padding: 0.5rem 0;
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background-color: white;
+            transition: width 0.3s ease;
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        /* Meal Tracker Specific Styles */
+        .meal-tracker {
+            padding: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .meal-tracker-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .meal-tracker-header h1 {
+            color: var(--primary);
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .meal-tracker-header p {
+            font-size: 1.1rem;
+            color: var(--text);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .meal-tracker-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        @media (max-width: 768px) {
+            .meal-tracker-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .add-meal-card, .nutrition-summary-card {
+            background-color: var(--card);
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .add-meal-card h2, .nutrition-summary-card h2 {
+            color: var(--primary);
+            margin-bottom: 1.5rem;
+            font-size: 1.5rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: var(--text);
+        }
+
+        .form-group input, .form-group select, .form-group textarea {
+            width: 100%;
+            padding: 0.8rem 1rem;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 1rem;
+            background-color: var(--bg);
+            color: var(--text);
+        }
+
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 2px rgba(255, 0, 54, 0.2);
+        }
+
+        .nutrition-inputs {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        .nutrition-inputs input {
+            background-color: #f8f9fa !important;
+            cursor: not-allowed;
+            border: 1px solid #ddd;
+        }
+
+        .add-meal-btn {
+            width: 100%;
+            padding: 1rem;
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            margin-top: 1rem;
+        }
+
+        .add-meal-btn:hover {
+            background-color: var(--primary-dark);
+        }
+
+        .add-meal-btn:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+
+        .nutrition-stats {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .nutrition-stat {
+            text-align: center;
+            padding: 1.5rem;
+            background-color: rgba(255, 0, 54, 0.05);
+            border-radius: 10px;
+        }
+
+        .nutrition-value {
+            font-size: 2rem;
+            font-weight: bold;
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .nutrition-label {
+            font-size: 0.9rem;
+            color: #777;
+            font-weight: 600;
+        }
+
+        .nutrition-progress {
+            margin-top: 1rem;
+        }
+
+        .progress-bar {
+            height: 8px;
+            background-color: #eee;
+            border-radius: 4px;
+            overflow: hidden;
+            margin-bottom: 0.5rem;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background-color: var(--primary);
+            border-radius: 4px;
+            transition: width 0.5s ease;
+        }
+
+        .progress-label {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.8rem;
+            color: #777;
+        }
+
+        .meal-history {
+            background-color: var(--card);
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .meal-history h2 {
+            color: var(--primary);
+            margin-bottom: 1.5rem;
+            font-size: 1.5rem;
+        }
+
+        .meal-list {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .meal-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem;
+            border-bottom: 1px solid #eee;
+            transition: background-color 0.3s ease;
+        }
+
+        .meal-item:hover {
+            background-color: rgba(255, 0, 54, 0.05);
+        }
+
+        .meal-info {
+            flex: 1;
+        }
+
+        .meal-name {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--text);
+        }
+
+        .meal-details {
+            display: flex;
+            gap: 1rem;
+            font-size: 0.9rem;
+            color: #777;
+        }
+
+        .meal-macros {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 0.5rem;
+        }
+
+        .macro-badge {
+            padding: 0.3rem 0.8rem;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .protein {
+            background-color: rgba(76, 175, 80, 0.1);
+            color: #4CAF50;
+        }
+
+        .carbs {
+            background-color: rgba(255, 152, 0, 0.1);
+            color: #FF9800;
+        }
+
+        .fiber {
+            background-color: rgba(156, 39, 176, 0.1);
+            color: #9C27B0;
+        }
+
+        .delete-meal {
+            background: none;
+            border: none;
+            color: #ff4444;
+            cursor: pointer;
+            font-size: 1.2rem;
+            padding: 0.5rem;
+            border-radius: 50%;
+            transition: background-color 0.3s ease;
+        }
+
+        .delete-meal:hover {
+            background-color: rgba(255, 68, 68, 0.1);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 3rem;
+            color: #777;
+        }
+
+        .empty-state i {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            color: #ddd;
+        }
+
+        .auto-calculated-note {
+            font-size: 0.8rem;
+            color: #666;
+            margin-top: 0.5rem;
+            font-style: italic;
+        }
+
+        .calculation-status {
+            font-size: 0.8rem;
+            margin-top: 0.5rem;
+            padding: 0.3rem;
+            border-radius: 4px;
+        }
+
+        .status-success {
+            color: #4CAF50;
+            background-color: rgba(76, 175, 80, 0.1);
+            border: 1px solid rgba(76, 175, 80, 0.2);
+        }
+
+        .status-warning {
+            color: #FF9800;
+            background-color: rgba(255, 152, 0, 0.1);
+            border: 1px solid rgba(255, 152, 0, 0.2);
+        }
+
+        .status-error {
+            color: #f44336;
+            background-color: rgba(244, 67, 54, 0.1);
+            border: 1px solid rgba(244, 67, 54, 0.2);
+        }
+
+        /* Footer */
+        footer {
+            background-color: var(--primary);
+            color: white;
+            padding: 3rem 2rem;
+            text-align: center;
+            margin-top: 4rem;
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            text-align: left;
+            max-width: 1200px;
+            margin: 0 auto 2rem;
+        }
+
+        .footer-section h3 {
+            margin-bottom: 1rem;
+            position: relative;
+            padding-bottom: 0.5rem;
+        }
+
+        .footer-section h3::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 50px;
+            height: 2px;
+            background-color: white;
+        }
+
+        .social-icons {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .social-icons a {
+            color: white;
+            font-size: 1.5rem;
+            transition: transform 0.3s ease;
+        }
+
+        .social-icons a:hover {
+            transform: translateY(-5px);
+        }
+
+        /* Animations */
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes slideInRight {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        @keyframes slideOutRight {
+            from { transform: translateX(0); opacity: 1; }
+            to { transform: translateX(100%); opacity: 0; }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+
+            .meal-tracker {
+                padding: 1rem;
+            }
+
+            .nutrition-inputs {
+                grid-template-columns: 1fr;
+            }
+
+            .nutrition-stats {
+                grid-template-columns: 1fr;
+            }
+
+            .meal-details {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+
+            .meal-macros {
+                flex-wrap: wrap;
+            }
+        }
+
+        /* Custom Notification Styles */
+        .custom-notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #4CAF50;
+            color: white;
+            padding: 15px 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            z-index: 10000;
+            max-width: 400px;
+            animation: slideInRight 0.3s ease;
+        }
+
+        .custom-notification.error {
+            background: #f44336;
+        }
+
+        .custom-notification.info {
+            background: #2196F3;
+        }
+
+        .notification-content {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .notification-close {
+            background: none;
+            border: none;
+            color: white;
+            cursor: pointer;
+            margin-left: auto;
+        }
+    </style>
+</head>
+<body class="light-theme">
+    <!-- Header & Navigation -->
+    <header>
+        <nav>
+            <div class="logo">
+                <i class="fas fa-heartbeat"></i>
+                <span>Fitness Freak</span>
+            </div>
+            <div class="nav-links">
+                <a href="index.html">Dashboard</a>
+                <a href="index.html">BMI Calculator</a>
+                <a href="index.html">Quick Workouts</a>
+                <a href="index.html">Seasonal Workouts</a>
+                <a href="mealtracker.html">Meal Tracker</a>
+                <a href="index.html">Premium</a>
+                <a href="index.html">Feedback</a>
+                <a href="index.html">About Us</a>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Meal Tracker Section -->
+    <section class="meal-tracker">
+        <div class="meal-tracker-header">
+            <h1>Smart Meal Tracker</h1>
+            <p>Enter your meal name and type to automatically calculate nutrition values. No manual input needed!</p>
+        </div>
+
+        <div class="meal-tracker-grid">
+            <!-- Add Meal Card -->
+            <div class="add-meal-card">
+                <h2>Add New Meal</h2>
+                <form id="addMealForm">
+                    <div class="form-group">
+                        <label for="mealName">Meal Name</label>
+                        <input type="text" id="mealName" placeholder="e.g., Chicken Salad, Oatmeal, Protein Shake" required>
+                        <div class="auto-calculated-note">Nutrition values will be calculated automatically</div>
+                        <div id="calculationStatus" class="calculation-status"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="mealType">Meal Type</label>
+                        <select id="mealType" required>
+                            <option value="">Select meal type</option>
+                            <option value="breakfast">Breakfast</option>
+                            <option value="lunch">Lunch</option>
+                            <option value="dinner">Dinner</option>
+                            <option value="snack">Snack</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="mealDate">Date & Time</label>
+                        <input type="datetime-local" id="mealDate" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Automatically Calculated Nutrition</label>
+                        <div class="nutrition-inputs">
+                            <div>
+                                <label for="calories">Calories</label>
+                                <input type="number" id="calories" placeholder="Calories" min="0" readonly>
+                            </div>
+                            <div>
+                                <label for="protein">Protein (g)</label>
+                                <input type="number" id="protein" placeholder="Protein" min="0" step="0.1" readonly>
+                            </div>
+                            <div>
+                                <label for="carbs">Carbs (g)</label>
+                                <input type="number" id="carbs" placeholder="Carbs" min="0" step="0.1" readonly>
+                            </div>
+                            <div>
+                                <label for="fiber">Fiber (g)</label>
+                                <input type="number" id="fiber" placeholder="Fiber" min="0" step="0.1" readonly>
+                            </div>
+                        </div>
+                        <div class="auto-calculated-note">Values are calculated based on meal name and type</div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="mealNotes">Notes (Optional)</label>
+                        <textarea id="mealNotes" placeholder="Any additional notes about this meal..." rows="3"></textarea>
+                    </div>
+
+                    <button type="submit" class="add-meal-btn" id="addMealBtn" disabled>
+                        <i class="fas fa-plus"></i> Add Meal
+                    </button>
+                </form>
+            </div>
+
+            <!-- Nutrition Summary Card -->
+            <div class="nutrition-summary-card">
+                <h2>Today's Nutrition</h2>
+                <div class="nutrition-stats">
+                    <div class="nutrition-stat">
+                        <div class="nutrition-value" id="totalCalories">0</div>
+                        <div class="nutrition-label">Calories</div>
+                    </div>
+                    <div class="nutrition-stat">
+                        <div class="nutrition-value" id="totalProtein">0g</div>
+                        <div class="nutrition-label">Protein</div>
+                    </div>
+                    <div class="nutrition-stat">
+                        <div class="nutrition-value" id="totalCarbs">0g</div>
+                        <div class="nutrition-label">Carbs</div>
+                    </div>
+                    <div class="nutrition-stat">
+                        <div class="nutrition-value" id="totalFiber">0g</div>
+                        <div class="nutrition-label">Fiber</div>
+                    </div>
+                </div>
+
+                <div class="nutrition-progress">
+                    <div class="progress-label">
+                        <span>Protein Goal</span>
+                        <span id="proteinProgress">0/150g</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="proteinFill" style="width: 0%"></div>
+                    </div>
+
+                    <div class="progress-label">
+                        <span>Carbs Goal</span>
+                        <span id="carbsProgress">0/250g</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="carbsFill" style="width: 0%"></div>
+                    </div>
+
+                    <div class="progress-label">
+                        <span>Fiber Goal</span>
+                        <span id="fiberProgress">0/30g</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="fiberFill" style="width: 0%"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Meal History -->
+        <div class="meal-history">
+            <h2>Meal History</h2>
+            <div class="meal-list" id="mealList">
+                <!-- Meal items will be populated by JavaScript -->
+                <div class="empty-state">
+                    <i class="fas fa-utensils"></i>
+                    <p>No meals logged yet. Add your first meal to get started!</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>Fitness Tracker</h3>
+                <p>Your ultimate companion for tracking progress and achieving a healthier life.</p>
+                <div class="social-icons">
+                    <a href="#"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#"><i class="fab fa-twitter"></i></a>
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                    <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                </div>
+            </div>
+            <div class="footer-section">
+                <h3>Quick Links</h3>
+                <p><a href="index.html" style="color: white; text-decoration: none;">Dashboard</a></p>
+                <p><a href="index.html#bmi" style="color: white; text-decoration: none;">BMI Calculator</a></p>
+                <p><a href="index.html#quick-workouts" style="color: white; text-decoration: none;">Quick Workouts</a></p>
+                <p><a href="meal-tracker.html" style="color: white; text-decoration: none;">Meal Tracker</a></p>
+            </div>
+            <div class="footer-section">
+                <h3>Support</h3>
+                <p>Email: asaifi0625@gmail.com</p>
+                <p>Phone: +91 807*******</p>
+                <p>Address: 123 Fitness Freak, Wellness City</p>
+            </div>
+        </div>
+        <p style="margin-top: 2rem;">&copy; 2025 Fitness Freak. All rights reserved.</p>
+    </footer>
+
+    <script>
+        // Meal Tracker Functionality - FIXED VERSION
+        (function() {
+            // Meal data stored in memory
+            let meals = [];
+            let dailyGoals = {
+                protein: 150,
+                carbs: 250,
+                fiber: 30
+            };
+
+            // Food database with nutrition information
+            const foodDatabase = {
+                'oatmeal': { calories: 150, protein: 5, carbs: 27, fiber: 4 },
+                'eggs': { calories: 140, protein: 12, carbs: 1, fiber: 0 },
+                'toast': { calories: 80, protein: 3, carbs: 15, fiber: 2 },
+                'yogurt': { calories: 120, protein: 10, carbs: 15, fiber: 0 },
+                'smoothie': { calories: 180, protein: 8, carbs: 30, fiber: 5 },
+                'cereal': { calories: 120, protein: 3, carbs: 24, fiber: 2 },
+                'pancakes': { calories: 200, protein: 6, carbs: 35, fiber: 2 },
+                'chicken salad': { calories: 320, protein: 25, carbs: 12, fiber: 4 },
+                'sandwich': { calories: 350, protein: 15, carbs: 45, fiber: 3 },
+                'soup': { calories: 180, protein: 8, carbs: 20, fiber: 3 },
+                'rice bowl': { calories: 400, protein: 20, carbs: 55, fiber: 6 },
+                'pasta': { calories: 380, protein: 12, carbs: 65, fiber: 4 },
+                'burger': { calories: 450, protein: 25, carbs: 35, fiber: 2 },
+                'wrap': { calories: 300, protein: 18, carbs: 30, fiber: 3 },
+                'grilled chicken': { calories: 280, protein: 35, carbs: 0, fiber: 0 },
+                'salmon': { calories: 320, protein: 30, carbs: 0, fiber: 0 },
+                'steak': { calories: 400, protein: 40, carbs: 0, fiber: 0 },
+                'stir fry': { calories: 350, protein: 20, carbs: 25, fiber: 5 },
+                'pizza': { calories: 450, protein: 18, carbs: 55, fiber: 3 },
+                'tacos': { calories: 380, protein: 22, carbs: 30, fiber: 4 },
+                'curry': { calories: 420, protein: 25, carbs: 35, fiber: 6 },
+                'protein shake': { calories: 160, protein: 30, carbs: 8, fiber: 1 },
+                'nuts': { calories: 200, protein: 8, carbs: 6, fiber: 3 },
+                'fruit': { calories: 80, protein: 1, carbs: 20, fiber: 4 },
+                'protein bar': { calories: 220, protein: 20, carbs: 24, fiber: 2 },
+                'cheese': { calories: 120, protein: 8, carbs: 1, fiber: 0 },
+                'crackers': { calories: 140, protein: 3, carbs: 20, fiber: 1 },
+                'hummus': { calories: 160, protein: 4, carbs: 12, fiber: 3 }
+            };
+
+            const defaultNutritionByType = {
+                'breakfast': { calories: 300, protein: 15, carbs: 45, fiber: 5 },
+                'lunch': { calories: 450, protein: 25, carbs: 55, fiber: 8 },
+                'dinner': { calories: 500, protein: 30, carbs: 40, fiber: 6 },
+                'snack': { calories: 150, protein: 8, carbs: 20, fiber: 3 }
+            };
+
+            // Initialize when DOM is ready
+            document.addEventListener('DOMContentLoaded', function() {
+                initMealTracker();
+            });
+
+            function initMealTracker() {
+                updateNutritionSummary();
+                renderMealList();
+                setupEventListeners();
+                
+                const now = new Date();
+                const localDateTime = now.toISOString().slice(0, 16);
+                document.getElementById('mealDate').value = localDateTime;
+            }
+
+            function setupEventListeners() {
+                document.getElementById('addMealForm').addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    addMeal();
+                });
+
+                document.getElementById('mealName').addEventListener('input', calculateNutrition);
+                document.getElementById('mealType').addEventListener('change', calculateNutrition);
+                document.getElementById('mealName').addEventListener('input', validateForm);
+                document.getElementById('mealType').addEventListener('change', validateForm);
+                document.getElementById('mealDate').addEventListener('change', validateForm);
+            }
+
+            function calculateNutrition() {
+                const mealName = document.getElementById('mealName').value.trim().toLowerCase();
+                const mealType = document.getElementById('mealType').value;
+                const statusElement = document.getElementById('calculationStatus');
+                
+                let nutrition = null;
+                let statusMessage = '';
+                let statusClass = '';
+
+                if (mealName && foodDatabase[mealName]) {
+                    nutrition = foodDatabase[mealName];
+                    statusMessage = `✓ Found exact match for "${mealName}"`;
+                    statusClass = 'status-success';
+                } else if (mealName) {
+                    for (const [food, nutrients] of Object.entries(foodDatabase)) {
+                        if (mealName.includes(food) || food.includes(mealName)) {
+                            nutrition = nutrients;
+                            statusMessage = `✓ Found similar match for "${mealName}"`;
+                            statusClass = 'status-success';
+                            break;
+                        }
+                    }
+                }
+
+                if (!nutrition && mealType) {
+                    nutrition = defaultNutritionByType[mealType];
+                    statusMessage = `✓ Using default values for ${mealType}`;
+                    statusClass = 'status-warning';
+                }
+
+                if (nutrition) {
+                    document.getElementById('calories').value = nutrition.calories;
+                    document.getElementById('protein').value = nutrition.protein;
+                    document.getElementById('carbs').value = nutrition.carbs;
+                    document.getElementById('fiber').value = nutrition.fiber;
+                    statusElement.textContent = statusMessage;
+                    statusElement.className = `calculation-status ${statusClass}`;
+                } else {
+                    document.getElementById('calories').value = '';
+                    document.getElementById('protein').value = '';
+                    document.getElementById('carbs').value = '';
+                    document.getElementById('fiber').value = '';
+                    
+                    if (mealName && !mealType) {
+                        statusElement.textContent = 'Please select a meal type';
+                        statusElement.className = 'calculation-status status-warning';
+                    } else if (!mealName && mealType) {
+                        statusElement.textContent = 'Please enter a meal name';
+                        statusElement.className = 'calculation-status status-warning';
+                    } else {
+                        statusElement.textContent = '';
+                        statusElement.className = 'calculation-status';
+                    }
+                }
+                validateForm();
+            }
+
+            function validateForm() {
+                const mealName = document.getElementById('mealName').value.trim();
+                const mealType = document.getElementById('mealType').value;
+                const mealDate = document.getElementById('mealDate').value;
+                const calories = document.getElementById('calories').value;
+                const protein = document.getElementById('protein').value;
+                const carbs = document.getElementById('carbs').value;
+                const fiber = document.getElementById('fiber').value;
+
+                const isValid = mealName && mealType && mealDate && calories && protein && carbs && fiber;
+                document.getElementById('addMealBtn').disabled = !isValid;
+            }
+
+            function addMeal() {
+                const mealName = document.getElementById('mealName').value.trim();
+                const mealType = document.getElementById('mealType').value;
+                const mealDate = document.getElementById('mealDate').value;
+                const calories = parseInt(document.getElementById('calories').value);
+                const protein = parseFloat(document.getElementById('protein').value);
+                const carbs = parseFloat(document.getElementById('carbs').value);
+                const fiber = parseFloat(document.getElementById('fiber').value);
+                const notes = document.getElementById('mealNotes').value.trim();
+
+                if (!mealName || !mealType || !mealDate || isNaN(calories) || isNaN(protein) || isNaN(carbs) || isNaN(fiber)) {
+                    showNotification('Please enter valid meal information.', 'error');
+                    return;
+                }
+
+                const meal = {
+                    id: Date.now(),
+                    name: mealName,
+                    type: mealType,
+                    date: mealDate,
+                    calories: calories,
+                    protein: protein,
+                    carbs: carbs,
+                    fiber: fiber,
+                    notes: notes,
+                    timestamp: new Date().toISOString()
+                };
+
+                meals.unshift(meal);
+                updateNutritionSummary();
+                renderMealList();
+                
+                document.getElementById('addMealForm').reset();
+                const now = new Date();
+                const localDateTime = now.toISOString().slice(0, 16);
+                document.getElementById('mealDate').value = localDateTime;
+                document.getElementById('calculationStatus').textContent = '';
+                document.getElementById('calculationStatus').className = 'calculation-status';
+                document.getElementById('addMealBtn').disabled = true;
+                
+                showNotification('Meal added successfully!', 'success');
+            }
+
+            function deleteMeal(mealId) {
+                if (confirm('Are you sure you want to delete this meal?')) {
+                    meals = meals.filter(meal => meal.id !== mealId);
+                    updateNutritionSummary();
+                    renderMealList();
+                    showNotification('Meal deleted successfully!', 'success');
+                }
+            }
+
+            function updateNutritionSummary() {
+                const today = new Date().toDateString();
+                let totalCalories = 0;
+                let totalProtein = 0;
+                let totalCarbs = 0;
+                let totalFiber = 0;
+
+                meals.forEach(meal => {
+                    const mealDate = new Date(meal.date).toDateString();
+                    if (mealDate === today) {
+                        totalCalories += meal.calories;
+                        totalProtein += meal.protein;
+                        totalCarbs += meal.carbs;
+                        totalFiber += meal.fiber;
+                    }
+                });
+
+                document.getElementById('totalCalories').textContent = totalCalories;
+                document.getElementById('totalProtein').textContent = `${totalProtein.toFixed(1)}g`;
+                document.getElementById('totalCarbs').textContent = `${totalCarbs.toFixed(1)}g`;
+                document.getElementById('totalFiber').textContent = `${totalFiber.toFixed(1)}g`;
+
+                const proteinPercent = Math.min((totalProtein / dailyGoals.protein) * 100, 100);
+                const carbsPercent = Math.min((totalCarbs / dailyGoals.carbs) * 100, 100);
+                const fiberPercent = Math.min((totalFiber / dailyGoals.fiber) * 100, 100);
+
+                document.getElementById('proteinFill').style.width = `${proteinPercent}%`;
+                document.getElementById('carbsFill').style.width = `${carbsPercent}%`;
+                document.getElementById('fiberFill').style.width = `${fiberPercent}%`;
+
+                document.getElementById('proteinProgress').textContent = `${totalProtein.toFixed(1)}/${dailyGoals.protein}g`;
+                document.getElementById('carbsProgress').textContent = `${totalCarbs.toFixed(1)}/${dailyGoals.carbs}g`;
+                document.getElementById('fiberProgress').textContent = `${totalFiber.toFixed(1)}/${dailyGoals.fiber}g`;
+            }
+
+            function renderMealList() {
+                const mealList = document.getElementById('mealList');
+                
+                if (meals.length === 0) {
+                    mealList.innerHTML = `
+                        <div class="empty-state">
+                            <i class="fas fa-utensils"></i>
+                            <p>No meals logged yet. Add your first meal to get started!</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                mealList.innerHTML = meals.map(meal => `
+                    <div class="meal-item">
+                        <div class="meal-info">
+                            <div class="meal-name">${meal.name}</div>
+                            <div class="meal-details">
+                                <span>${formatMealType(meal.type)}</span>
+                                <span>${formatDate(meal.date)}</span>
+                                <span>${meal.calories} cal</span>
+                            </div>
+                            <div class="meal-macros">
+                                <span class="macro-badge protein">${meal.protein}g protein</span>
+                                <span class="macro-badge carbs">${meal.carbs}g carbs</span>
+                                <span class="macro-badge fiber">${meal.fiber}g fiber</span>
+                            </div>
+                            ${meal.notes ? `<div style="margin-top: 0.5rem; font-size: 0.9rem; color: #777;">${meal.notes}</div>` : ''}
+                        </div>
+                        <button class="delete-meal" onclick="window.deleteMealFunction(${meal.id})">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                `).join('');
+            }
+
+            function formatMealType(type) {
+                const types = {
+                    'breakfast': 'Breakfast',
+                    'lunch': 'Lunch',
+                    'dinner': 'Dinner',
+                    'snack': 'Snack'
+                };
+                return types[type] || type;
+            }
+
+            function formatDate(dateString) {
+                const date = new Date(dateString);
+                return date.toLocaleDateString() + ' ' + date.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+            }
+
+            function showNotification(message, type = 'info') {
+                const existingNotifications = document.querySelectorAll('.custom-notification');
+                existingNotifications.forEach(notification => notification.remove());
+
+                const notification = document.createElement('div');
+                notification.className = `custom-notification ${type === 'error' ? 'error' : type === 'info' ? 'info' : ''}`;
+                notification.innerHTML = `
+                    <div class="notification-content">
+                        <i class="fas fa-${type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-circle' : 'info-circle'}"></i>
+                        <span>${message}</span>
+                        <button class="notification-close">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                `;
+
+                document.body.appendChild(notification);
+
+                notification.querySelector('.notification-close').addEventListener('click', () => {
+                    notification.style.animation = 'slideOutRight 0.3s ease';
+                    setTimeout(() => notification.remove(), 300);
+                });
+
+                setTimeout(() => {
+                    if (notification.parentElement) {
+                        notification.style.animation = 'slideOutRight 0.3s ease';
+                        setTimeout(() => notification.remove(), 300);
+                    }
+                }, 5000);
+            }
+
+            // Expose deleteMeal function globally
+            window.deleteMealFunction = deleteMeal;
+        })();
+    </script>
+</body>
+</html>

@@ -6,6 +6,281 @@
     <title>BeeFit | Your Fitness Companion</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
+        /* ===== AI CHATBOT STYLES ===== */
+        .chatbot-container {
+            position: fixed;
+            bottom: 90px;
+            right: 20px;
+            z-index: 10000;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .chat-toggle-btn {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 8px 25px rgba(255, 0, 54, 0.4);
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 28px;
+        }
+
+        .chat-toggle-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 12px 30px rgba(255, 0, 54, 0.5);
+        }
+
+        .chat-window {
+            position: fixed;
+            bottom: 100px;
+            right: 20px;
+            width: 380px;
+            height: 550px;
+            background-color: var(--card);
+            border-radius: 24px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            transform: scale(0);
+            opacity: 0;
+            transform-origin: bottom right;
+            transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            border: 1px solid rgba(255, 0, 54, 0.2);
+        }
+
+        .chat-window.active {
+            transform: scale(1);
+            opacity: 1;
+        }
+
+        .chat-header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            padding: 16px 20px;
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .chat-header h3 {
+            font-size: 1.2rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .chat-header h3 i {
+            font-size: 1.3rem;
+        }
+
+        .close-chat {
+            background: rgba(255,255,255,0.2);
+            border: none;
+            color: white;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+
+        .close-chat:hover {
+            background: rgba(255,255,255,0.4);
+            transform: rotate(90deg);
+        }
+
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            background-color: var(--bg);
+        }
+
+        .message {
+            display: flex;
+            gap: 10px;
+            max-width: 85%;
+            animation: fadeInUp 0.3s ease;
+        }
+
+        .message.bot {
+            align-self: flex-start;
+        }
+
+        .message.user {
+            align-self: flex-end;
+            flex-direction: row-reverse;
+        }
+
+        .message-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 14px;
+            flex-shrink: 0;
+        }
+
+        .message.user .message-avatar {
+            background: #4CAF50;
+        }
+
+        .message-bubble {
+            background-color: var(--card);
+            padding: 10px 14px;
+            border-radius: 18px;
+            font-size: 0.9rem;
+            line-height: 1.4;
+            color: var(--text);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            border: 1px solid rgba(0,0,0,0.05);
+        }
+
+        .message.bot .message-bubble {
+            border-top-left-radius: 4px;
+            background-color: var(--card);
+        }
+
+        .message.user .message-bubble {
+            border-top-right-radius: 4px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: white;
+        }
+
+        .typing-indicator {
+            display: flex;
+            gap: 4px;
+            padding: 8px 12px;
+            background-color: var(--card);
+            border-radius: 18px;
+            width: fit-content;
+        }
+
+        .typing-indicator span {
+            width: 8px;
+            height: 8px;
+            background-color: #999;
+            border-radius: 50%;
+            animation: typing 1.4s infinite ease-in-out;
+        }
+
+        .typing-indicator span:nth-child(1) { animation-delay: 0s; }
+        .typing-indicator span:nth-child(2) { animation-delay: 0.2s; }
+        .typing-indicator span:nth-child(3) { animation-delay: 0.4s; }
+
+        @keyframes typing {
+            0%, 60%, 100% { transform: translateY(0); opacity: 0.4; }
+            30% { transform: translateY(-6px); opacity: 1; }
+        }
+
+        .chat-input-area {
+            padding: 16px;
+            border-top: 1px solid rgba(0,0,0,0.1);
+            display: flex;
+            gap: 10px;
+            background-color: var(--card);
+        }
+
+        .chat-input {
+            flex: 1;
+            padding: 12px 16px;
+            border: 1px solid #ddd;
+            border-radius: 30px;
+            font-size: 0.9rem;
+            background-color: var(--bg);
+            color: var(--text);
+            outline: none;
+            transition: all 0.2s;
+        }
+
+        .chat-input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 2px rgba(255,0,54,0.2);
+        }
+
+        .chat-send-btn {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: var(--primary);
+            border: none;
+            color: white;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .chat-send-btn:hover {
+            background: var(--primary-dark);
+            transform: scale(1.05);
+        }
+
+        .chat-suggestions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            padding: 12px 16px;
+            background-color: var(--card);
+            border-top: 1px solid rgba(0,0,0,0.05);
+        }
+
+        .suggestion-chip {
+            background-color: rgba(255,0,54,0.1);
+            color: var(--primary);
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: none;
+        }
+
+        .suggestion-chip:hover {
+            background-color: var(--primary);
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @media (max-width: 480px) {
+            .chat-window {
+                width: 90vw;
+                height: 70vh;
+                right: 5vw;
+                bottom: 90px;
+            }
+        }
+
         /* All existing CSS styles remain the same */
         /* Adding new styles for seasonal workouts */
         /* Add these new styles for quick workouts */
@@ -5983,7 +6258,34 @@
         </div>
         <p style="margin-top: 2rem;">&copy; 2026 Fitness Freak. All rights reserved.</p>
     </footer>
-
+<!-- AI CHATBOT HTML -->
+    <div class="chatbot-container">
+        <button class="chat-toggle-btn" id="chatToggleBtn">
+            <i class="fas fa-robot"></i>
+        </button>
+        <div class="chat-window" id="chatWindow">
+            <div class="chat-header">
+                <h3><i class="fas fa-brain"></i> Bee AI Coach</h3>
+                <button class="close-chat" id="closeChatBtn"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="chat-messages" id="chatMessages">
+                <div class="message bot">
+                    <div class="message-avatar"><i class="fas fa-robot"></i></div>
+                    <div class="message-bubble">🐝 Hey there! I'm Bee AI, your fitness coach. Ask me about workouts, nutrition, BMI, or motivation!</div>
+                </div>
+            </div>
+            <div class="chat-suggestions" id="chatSuggestions">
+                <button class="suggestion-chip" data-msg="Best workout for weight loss?">🏋️ Weight loss workout?</button>
+                <button class="suggestion-chip" data-msg="High protein meal ideas?">🍗 Meal ideas?</button>
+                <button class="suggestion-chip" data-msg="How to stay motivated?">🔥 Motivation tips</button>
+                <button class="suggestion-chip" data-msg="Explain BMI">📊 What is BMI?</button>
+            </div>
+            <div class="chat-input-area">
+                <input type="text" class="chat-input" id="chatInput" placeholder="Ask me anything about fitness...">
+                <button class="chat-send-btn" id="chatSendBtn"><i class="fas fa-paper-plane"></i></button>
+            </div>
+        </div>
+    </div>
     <script>
         // Page Loader
 window.addEventListener('load', function() {
@@ -8909,6 +9211,251 @@ document.getElementById('addMealQuickBtn').addEventListener('click', function() 
     // Redirect to the meal tracker page instead of opening modal
     window.location.href = 'mealtracker.html';
 });
+    </script>
+    <!-- CHAT BOT DEMO   -->
+    <script>
+        // ============================================
+// BEEFIT AI CHATBOT - Complete JavaScript Module
+// ============================================
+// Smart fitness assistant with contextual responses
+// Features: workout tips, nutrition, BMI, motivation, hydration, sleep
+// ============================================
+
+(function() {
+    'use strict';
+
+    // ---------- DOM Elements ----------
+    let chatToggleBtn, chatWindow, closeChatBtn, chatMessages, chatInput, sendBtn, suggestionChips;
+
+    // ---------- Chat UI Helpers ----------
+    function addMessage(text, sender) {
+        const messageDiv = document.createElement('div');
+        messageDiv.className = `message ${sender}`;
+        const avatarIcon = sender === 'bot' ? '<i class="fas fa-robot"></i>' : '<i class="fas fa-user"></i>';
+        messageDiv.innerHTML = `
+            <div class="message-avatar">${avatarIcon}</div>
+            <div class="message-bubble">${escapeHtml(text)}</div>
+        `;
+        chatMessages.appendChild(messageDiv);
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
+
+    function escapeHtml(str) {
+        return str.replace(/[&<>]/g, function(m) {
+            if (m === '&') return '&amp;';
+            if (m === '<') return '&lt;';
+            if (m === '>') return '&gt;';
+            return m;
+        }).replace(/[\uD800-\uDBFF][\uDC00-\uDFFF]/g, function(c) {
+            return c;
+        });
+    }
+
+    function showTyping() {
+        const typingDiv = document.createElement('div');
+        typingDiv.className = 'message bot';
+        typingDiv.id = 'typingIndicator';
+        typingDiv.innerHTML = `
+            <div class="message-avatar"><i class="fas fa-robot"></i></div>
+            <div class="typing-indicator"><span></span><span></span><span></span></div>
+        `;
+        chatMessages.appendChild(typingDiv);
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
+
+    function removeTyping() {
+        const typing = document.getElementById('typingIndicator');
+        if (typing) typing.remove();
+    }
+
+    // ---------- Core AI Response Engine ----------
+    function getAIResponse(userMessage) {
+        const msg = userMessage.toLowerCase().trim();
+        
+        // ----- WORKOUT & EXERCISE -----
+        if (msg.includes('workout') || msg.includes('exercise') || msg.includes('training') || msg.includes('gym')) {
+            if (msg.includes('weight loss') || msg.includes('fat loss') || msg.includes('lose weight')) {
+                return "🔥 For weight loss, combine HIIT (High-Intensity Interval Training) 3-4x/week with strength training. Example: 30 sec sprint / 30 sec rest x 10 rounds burns major calories! Also, steady-state cardio 150 min/week is effective.";
+            }
+            if (msg.includes('muscle') || msg.includes('build muscle') || msg.includes('gain muscle')) {
+                return "💪 To build muscle: focus on compound lifts (squats, deadlifts, bench press, rows). Train each muscle group 2x/week, progressive overload, and eat 1.6-2.2g protein per kg body weight. Rest 48h between heavy sessions.";
+            }
+            if (msg.includes('home') || msg.includes('no equipment') || msg.includes('bodyweight')) {
+                return "🏠 Home bodyweight workout: 3 rounds of 45 sec work / 15 sec rest → squats, push-ups, lunges, planks, mountain climbers, glute bridges. Add jumping jacks for cardio! Perfect for small spaces.";
+            }
+            if (msg.includes('beginner') || msg.includes('start')) {
+                return "🌟 Beginner routine: Start with 20-30 min walking daily, plus basic bodyweight exercises (squats, wall push-ups, seated rows with bands). Aim for 2-3 sessions/week, gradually increase intensity.";
+            }
+            if (msg.includes('chest') || msg.includes('bench')) {
+                return "🏋️ Chest day: Bench press (4x8-12), incline dumbbell press (3x10), cable flyes (3x12), push-ups to failure. Form over weight!";
+            }
+            if (msg.includes('leg') || msg.includes('squat')) {
+                return "🦵 Leg day essentials: Squats (4x8-10), Romanian deadlifts (3x12), walking lunges (3x15 per leg), leg press, calf raises. Strong legs = better metabolism!";
+            }
+            if (msg.includes('cardio') || msg.includes('running')) {
+                return "🏃 Cardio benefits: Improves heart health, burns calories, reduces stress. Mix LISS (long slow runs) with HIIT. Try 30 min jogging 3x/week + 1 HIIT session.";
+            }
+            return "🏋️‍♂️ A balanced routine includes strength, cardio, and mobility. Want specific exercises for a goal? Ask me about 'weight loss workout' or 'muscle building'!";
+        }
+        
+        // ----- NUTRITION & MEALS -----
+        if (msg.includes('meal') || msg.includes('food') || msg.includes('eat') || msg.includes('diet') || msg.includes('nutrition') || msg.includes('protein')) {
+            if (msg.includes('high protein') || msg.includes('protein rich')) {
+                return "🍗 High-protein meals: Grilled chicken breast + quinoa + broccoli, Greek yogurt with berries & nuts, tofu stir-fry, eggs with spinach, cottage cheese, lentils. Aim for 25-40g protein per meal.";
+            }
+            if (msg.includes('breakfast')) {
+                return "🥞 Healthy breakfast ideas: Oatmeal with protein powder & banana, scrambled eggs with avocado on whole-grain toast, Greek yogurt parfait, or smoothie with spinach & berries.";
+            }
+            if (msg.includes('lunch')) {
+                return "🥗 Power lunch: Grilled salmon with sweet potato & asparagus, quinoa bowl with chickpeas & veggies, turkey wrap with hummus. Balance protein + fiber + healthy fats.";
+            }
+            if (msg.includes('dinner')) {
+                return "🍽️ Dinner options: Lean steak with roasted veggies, baked cod with brown rice, lentil soup with whole-grain bread, stir-fried tofu with vegetables.";
+            }
+            if (msg.includes('snack')) {
+                return "🍎 Healthy snacks: Apple with peanut butter, handful of almonds, cottage cheese, protein shake, rice cakes with avocado, or hard-boiled eggs.";
+            }
+            if (msg.includes('vegan') || msg.includes('plant based')) {
+                return "🌱 Vegan protein sources: Tofu, tempeh, edamame, lentils, chickpeas, quinoa, seitan, nutritional yeast, and plant-based protein powders. Combine grains + legumes for complete protein.";
+            }
+            if (msg.includes('calorie deficit') || msg.includes('cutting')) {
+                return "⚡ For calorie deficit: Eat 300-500 calories below maintenance. Prioritize lean protein, high-fiber veggies, and drink water before meals. Track using apps like MyFitnessPal.";
+            }
+            return "🥗 Balanced nutrition: Fill half your plate with veggies, 1/4 lean protein, 1/4 complex carbs. Stay hydrated! Want specific meal ideas? Ask 'high protein breakfast' or 'vegan lunch'.";
+        }
+        
+        // ----- BMI & BODY COMPOSITION -----
+        if (msg.includes('bmi') || msg.includes('body mass index')) {
+            return "📊 BMI = weight(kg) ÷ height(m)². Healthy range: 18.5–24.9. Below 18.5 = underweight, 25–29.9 = overweight, 30+ = obesity. Note: BMI doesn't account for muscle mass. Use our BMI calculator on the site for instant result!";
+        }
+        
+        // ----- MOTIVATION & MINDSET -----
+        if (msg.includes('motivation') || msg.includes('stay motivated') || msg.includes('give up') || msg.includes('demotivated')) {
+            return "🌟 Motivation hacks: Set tiny daily goals (e.g., '10-min walk'), track progress with photos/measurements, find a workout buddy, reward yourself (new gear!), and remember your 'why'. You are capable of more than you know! 💪";
+        }
+        
+        // ----- HYDRATION -----
+        if (msg.includes('water') || msg.includes('hydrate') || msg.includes('hydration') || msg.includes('drink')) {
+            return "💧 Hydration formula: Body weight (kg) × 0.033 = daily liters. Example: 70kg → 2.3L. Add 0.5-1L per hour of exercise. Tip: carry a marked bottle and set hourly reminders.";
+        }
+        
+        // ----- SLEEP & RECOVERY -----
+        if (msg.includes('sleep') || msg.includes('rest') || msg.includes('recovery')) {
+            return "😴 Sleep is when muscles repair! Aim for 7-9 hours. Tips: consistent bedtime, dark cool room, no screens 1h before, avoid caffeine after 2pm. Proper sleep = better performance + fat loss.";
+        }
+        
+        // ----- SUPPLEMENTS -----
+        if (msg.includes('supplement') || msg.includes('whey') || msg.includes('creatine') || msg.includes('vitamin')) {
+            return "💊 Evidence-based supplements: Whey protein (convenient protein), Creatine (strength/power), Vitamin D (if deficient), Omega-3 (joint health). Always consult a doctor before starting.";
+        }
+        
+        // ----- STRETCHING / FLEXIBILITY -----
+        if (msg.includes('stretch') || msg.includes('flexibility') || msg.includes('mobility')) {
+            return "🧘 Daily mobility: 10 min dynamic stretching before workouts (leg swings, arm circles), static stretching after (hamstring stretch, quad stretch, chest opener). Yoga 2x/week improves flexibility and reduces injury risk.";
+        }
+        
+        // ----- INJURY & PAIN -----
+        if (msg.includes('injury') || msg.includes('pain') || msg.includes('hurt') || msg.includes('sore')) {
+            return "⚠️ Listen to your body! For minor soreness: rest, ice, compression, elevation (RICE). Persistent pain → consult a professional. Don't train through sharp pain. Modify exercises to avoid aggravation.";
+        }
+        
+        // ----- GREETINGS & FAREWELL -----
+        if (msg.match(/^(hi|hello|hey|greetings|sup|hola)$/i)) {
+            return "🐝 Hey there! I'm Bee AI, your fitness sidekick. Ask me anything about workouts, nutrition, BMI, motivation, or wellness! Let's crush your goals together 💪";
+        }
+        if (msg.includes('thank') || msg.includes('thanks') || msg.includes('appreciate')) {
+            return "🐝 You're very welcome! Keep showing up for yourself. Remember: consistency beats intensity. Anything else I can help with?";
+        }
+        if (msg.includes('bye') || msg.includes('goodbye') || msg.includes('see ya')) {
+            return "👋 Stay strong and keep moving! Come back anytime you need fitness advice. Bee AI always here. 💪🐝";
+        }
+        
+        // ----- FALLBACK / GENERAL WELLNESS -----
+        if (msg.includes('calorie') || msg.includes('calories')) {
+            return "🔥 Calorie basics: To lose weight: deficit of 300-500 cals/day. To gain muscle: surplus of 300-500 cals. Focus on whole foods: lean proteins, complex carbs, healthy fats. Track for 1 week to understand your patterns.";
+        }
+        if (msg.includes('steps') || msg.includes('walking')) {
+            return "🚶‍♀️ Walking is underrated! Aim for 8,000-10,000 steps daily. Break it into 15-min walks after meals. Walking improves heart health, aids digestion, and burns calories without joint stress.";
+        }
+        
+        return "🐝 I'm your AI fitness coach! I can help with: \n• Workout plans (weight loss, muscle gain, home workouts)\n• Nutrition & meal ideas (high protein, vegan, breakfast)\n• BMI calculation & interpretation\n• Motivation, hydration, sleep tips\n\nTry asking: 'best workout for weight loss?' or 'high protein breakfast ideas?'";
+    }
+
+    // ---------- Send Message Handler ----------
+    async function processUserMessage(messageText) {
+        if (!messageText.trim()) return;
+        addMessage(messageText, 'user');
+        chatInput.value = '';
+        
+        showTyping();
+        // Simulate thoughtful response delay (300-800ms)
+        setTimeout(() => {
+            removeTyping();
+            const response = getAIResponse(messageText);
+            addMessage(response, 'bot');
+        }, 500);
+    }
+
+    function sendMessage() {
+        const text = chatInput.value.trim();
+        if (text) processUserMessage(text);
+    }
+
+    // ---------- Initialize Chat UI & Event Listeners ----------
+    function initChatbot() {
+        // DOM Elements
+        chatToggleBtn = document.getElementById('chatToggleBtn');
+        chatWindow = document.getElementById('chatWindow');
+        closeChatBtn = document.getElementById('closeChatBtn');
+        chatMessages = document.getElementById('chatMessages');
+        chatInput = document.getElementById('chatInput');
+        sendBtn = document.getElementById('chatSendBtn');
+        suggestionChips = document.querySelectorAll('.suggestion-chip');
+
+        if (!chatToggleBtn || !chatWindow) return; // safety check
+
+        // Toggle chat window
+        chatToggleBtn.addEventListener('click', () => {
+            chatWindow.classList.toggle('active');
+        });
+        closeChatBtn.addEventListener('click', () => {
+            chatWindow.classList.remove('active');
+        });
+
+        // Send message events
+        sendBtn.addEventListener('click', sendMessage);
+        chatInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') sendMessage();
+        });
+
+        // Suggestion chips
+        suggestionChips.forEach(chip => {
+            chip.addEventListener('click', () => {
+                const msg = chip.getAttribute('data-msg');
+                if (msg) processUserMessage(msg);
+            });
+        });
+
+        // Close chat when clicking outside (optional, but user-friendly)
+        document.addEventListener('click', (e) => {
+            if (chatWindow.classList.contains('active') && 
+                !chatWindow.contains(e.target) && 
+                !chatToggleBtn.contains(e.target)) {
+                chatWindow.classList.remove('active');
+            }
+        });
+
+        // Prevent event bubbling on chat window itself
+        chatWindow.addEventListener('click', (e) => e.stopPropagation());
+    }
+
+    // ---------- Wait for DOM to be fully loaded ----------
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initChatbot);
+    } else {
+        initChatbot();
+    }
+})();
     </script>
     <!-- Add this right before the closing </body> tag  -->
 <!-- Video Modal -->

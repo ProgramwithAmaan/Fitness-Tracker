@@ -6,10 +6,77 @@
     <title>BeeFit | Nutrition & Diet</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
+        
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+        }
+        /* ========== CUSTOM POINTER STYLES ========== */
+        /* Main cursor circle */
+        .custom-cursor {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(255,0,54,0.9), rgba(255,51,88,0.6));
+            pointer-events: none;
+            z-index: 99999;
+            transform: translate(-50%, -50%);
+            transition: width 0.2s, height 0.2s, background 0.2s, box-shadow 0.2s;
+            box-shadow: 0 0 15px rgba(255,0,54,0.5);
+            backdrop-filter: blur(2px);
+            will-change: transform;
+        }
+
+        /* Outer glow ring */
+        .custom-cursor-ring {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 60px;
+            height: 60px;
+            border: 2px solid rgba(255,0,54,0.6);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 99998;
+            transform: translate(-50%, -50%);
+            transition: width 0.3s, height 0.3s, border-color 0.2s, opacity 0.2s;
+            will-change: transform;
+            opacity: 0.8;
+        }
+
+        /* Hover effect on interactive elements */
+        .custom-cursor.hover {
+            width: 48px;
+            height: 48px;
+            background: radial-gradient(circle, rgba(255,0,54,1), rgba(255,107,139,0.9));
+            box-shadow: 0 0 25px rgba(255,0,54,0.8);
+        }
+
+        .custom-cursor-ring.hover {
+            width: 80px;
+            height: 80px;
+            border-color: rgba(255,107,139,0.9);
+            opacity: 1;
+        }
+
+        /* Click animation */
+        .custom-cursor.click {
+            transform: translate(-50%, -50%) scale(0.8);
+            transition: transform 0.1s ease;
+        }
+
+        /* Hide cursor on touch devices */
+        @media (pointer: coarse) {
+            .custom-cursor, .custom-cursor-ring {
+                display: none;
+            }
+            body {
+                cursor: auto;
+            }
         }
 
         :root {
@@ -698,7 +765,140 @@
         </div>
     </div>
 
+    <!-- CUSTOM CURSOR HTML ELEMENTS -->
+    <div class="custom-cursor" id="customCursor"></div>
+    <div class="custom-cursor-ring" id="customCursorRing"></div>
+
     <script>
+        (function() {
+            'use strict';
+            
+            // DOM elements
+            const cursor = document.getElementById('customCursor');
+            const cursorRing = document.getElementById('customCursorRing');
+            
+            // Cursor position tracking
+            let mouseX = 0, mouseY = 0;
+            let ringX = 0, ringY = 0;
+            let cursorX = 0, cursorY = 0;
+            
+            // Animation frame IDs
+            let animationFrameId = null;
+            
+            // Interactive elements selector (all clickable/hoverable items)
+            const interactiveSelectors = [
+                'a', 'button', '.cta-button', '.start-workout-btn', 
+                '.filter-btn', '.seasonal-tab', '.seasonal-card-btn',
+                '.quick-action-btn', '.dashboard-btn', '.feature-card',
+                '.plan-card', '.nav-links a', '.profile-btn', '.theme-toggle',
+                '.suggestion-chip', '.chat-send-btn', '.close-chat',
+                '.chat-toggle-btn', '.video-link-btn', '.graph-btn',
+                '.mark-complete', '.reset-progress', '.progress-btn',
+                '.features-toggle', '.billing-option', '.cta-button',
+                '.card', 'button', '[role="button"]', '.team-member'
+            ];
+            
+            // Update cursor position from mouse move
+            function updateMousePosition(e) {
+                mouseX = e.clientX;
+                mouseY = e.clientY;
+            }
+            
+            // Smooth animation loop for cursor following
+            function animateCursor() {
+                // Smooth following for main cursor (faster)
+                cursorX += (mouseX - cursorX) * 0.25;
+                cursorY += (mouseY - cursorY) * 0.25;
+                
+                // Ring follows with slight delay (smoother, trailing effect)
+                ringX += (mouseX - ringX) * 0.15;
+                ringY += (mouseY - ringY) * 0.15;
+                
+                // Apply transforms
+                if (cursor) {
+                    cursor.style.transform = `translate3d(${cursorX}px, ${cursorY}px, 0)`;
+                }
+                if (cursorRing) {
+                    cursorRing.style.transform = `translate3d(${ringX}px, ${ringY}px, 0)`;
+                }
+                
+                animationFrameId = requestAnimationFrame(animateCursor);
+            }
+            
+            // Add hover effect class when hovering over interactive elements
+            function addHoverEffects() {
+                const interactiveElements = document.querySelectorAll(interactiveSelectors.join(','));
+                
+                interactiveElements.forEach(el => {
+                    el.addEventListener('mouseenter', () => {
+                        if (cursor) cursor.classList.add('hover');
+                        if (cursorRing) cursorRing.classList.add('hover');
+                    });
+                    
+                    el.addEventListener('mouseleave', () => {
+                        if (cursor) cursor.classList.remove('hover');
+                        if (cursorRing) cursorRing.classList.remove('hover');
+                    });
+                    
+                    // Optional: click effect (scale down on mousedown)
+                    el.addEventListener('mousedown', () => {
+                        if (cursor) cursor.classList.add('click');
+                    });
+                    
+                    el.addEventListener('mouseup', () => {
+                        if (cursor) cursor.classList.remove('click');
+                    });
+                });
+            }
+            
+            // Also add hover effects to dynamically added elements (use MutationObserver)
+            function observeDynamicElements() {
+                const observer = new MutationObserver(() => {
+                    addHoverEffects();
+                });
+                
+                observer.observe(document.body, {
+                    childList: true,
+                    subtree: true
+                });
+            }
+            
+            // Initialize cursor and event listeners
+            function initCustomCursor() {
+                // Hide default cursor on body
+                document.body.style.cursor = 'none';
+                
+                // Add all interactive elements hover effects
+                addHoverEffects();
+                
+                // Watch for new interactive elements
+                observeDynamicElements();
+                
+                // Mouse move tracking
+                window.addEventListener('mousemove', updateMousePosition);
+                
+                // Also handle when mouse leaves window (optional: hide cursor)
+                window.addEventListener('mouseleave', () => {
+                    if (cursor) cursor.style.opacity = '0';
+                    if (cursorRing) cursorRing.style.opacity = '0';
+                });
+                
+                window.addEventListener('mouseenter', () => {
+                    if (cursor) cursor.style.opacity = '1';
+                    if (cursorRing) cursorRing.style.opacity = '0.8';
+                });
+                
+                // Start animation loop
+                animateCursor();
+            }
+            
+            // Start everything when DOM is ready
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', initCustomCursor);
+            } else {
+                initCustomCursor();
+            }
+        })();
         // Nutrition Data Manager
         class NutritionManager {
             constructor() {

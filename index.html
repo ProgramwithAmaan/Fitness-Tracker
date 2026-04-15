@@ -6,6 +6,266 @@
     <title>BeeFit | Your Fitness Companion</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
+                /* Base animation classes (initially hidden) */
+        .scroll-reveal {
+            opacity: 0;
+            visibility: hidden;
+            will-change: transform, opacity;
+        }
+        
+        /* Fade In Up */
+        .fade-up {
+            transform: translateY(60px);
+            transition: all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+        .fade-up.revealed {
+            transform: translateY(0);
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        /* Fade In Down */
+        .fade-down {
+            transform: translateY(-60px);
+            transition: all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+        .fade-down.revealed {
+            transform: translateY(0);
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        /* Fade In Left */
+        .fade-left {
+            transform: translateX(-80px);
+            transition: all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+        .fade-left.revealed {
+            transform: translateX(0);
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        /* Fade In Right */
+        .fade-right {
+            transform: translateX(80px);
+            transition: all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+        .fade-right.revealed {
+            transform: translateX(0);
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        /* Zoom In */
+        .zoom-in {
+            transform: scale(0.7);
+            transition: all 0.7s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+        }
+        .zoom-in.revealed {
+            transform: scale(1);
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        /* Zoom Out */
+        .zoom-out {
+            transform: scale(1.3);
+            transition: all 0.7s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+        }
+        .zoom-out.revealed {
+            transform: scale(1);
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        /* Rotate In */
+        .rotate-in {
+            transform: rotate(-12deg) scale(0.8);
+            transition: all 0.7s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+        }
+        .rotate-in.revealed {
+            transform: rotate(0) scale(1);
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        /* Flip In X */
+        .flip-x {
+            transform: perspective(400px) rotateX(90deg);
+            transform-origin: center;
+            transition: all 0.8s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+        }
+        .flip-x.revealed {
+            transform: perspective(400px) rotateX(0);
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        /* Flip In Y */
+        .flip-y {
+            transform: perspective(400px) rotateY(90deg);
+            transform-origin: center;
+            transition: all 0.8s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+        }
+        .flip-y.revealed {
+            transform: perspective(400px) rotateY(0);
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        /* Bounce In */
+        .bounce-in {
+            transform: scale(0.3);
+            transition: all 0.7s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+        .bounce-in.revealed {
+            transform: scale(1);
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        /* Slide In With Ease Out */
+        .slide-ease {
+            transform: translateY(100px);
+            transition: all 1s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+        .slide-ease.revealed {
+            transform: translateY(0);
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        /* Blur In */
+        .blur-in {
+            filter: blur(10px);
+            transform: scale(1.05);
+            transition: all 0.8s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+        }
+        .blur-in.revealed {
+            filter: blur(0);
+            transform: scale(1);
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        /* Pop Effect */
+        .pop-effect {
+            transition: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+        .pop-effect.revealed {
+            transform: scale(1.02);
+            box-shadow: 0 20px 40px rgba(255, 0, 54, 0.2);
+        }
+        
+        /* Floating Animation (continuous) */
+        .float-animation {
+            animation: floatElement 3s ease-in-out infinite;
+        }
+        
+        @keyframes floatElement {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-15px); }
+            100% { transform: translateY(0px); }
+        }
+        
+        /* Gentle Wobble on Hover */
+        .wobble-hover {
+            transition: all 0.3s ease;
+        }
+        .wobble-hover:hover {
+            animation: wobble 0.5s ease;
+        }
+        
+        @keyframes wobble {
+            0% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+            100% { transform: translateX(0); }
+        }
+        
+        /* Staggered Children Animation */
+        .stagger-container > * {
+            opacity: 0;
+            transform: translateY(40px);
+            transition: all 0.6s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+        }
+        .stagger-container.revealed > *:nth-child(1) { transition-delay: 0s; }
+        .stagger-container.revealed > *:nth-child(2) { transition-delay: 0.1s; }
+        .stagger-container.revealed > *:nth-child(3) { transition-delay: 0.2s; }
+        .stagger-container.revealed > *:nth-child(4) { transition-delay: 0.3s; }
+        .stagger-container.revealed > *:nth-child(5) { transition-delay: 0.4s; }
+        .stagger-container.revealed > *:nth-child(6) { transition-delay: 0.5s; }
+        .stagger-container.revealed > * {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        /* Scroll Progress Indicator */
+        .scroll-progress-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 0%;
+            height: 3px;
+            background: linear-gradient(90deg, #ff0036, #ff6b8b, #ff0036);
+            z-index: 10000;
+            transition: width 0.1s ease;
+            box-shadow: 0 0 10px rgba(255, 0, 54, 0.5);
+        }
+        
+        /* Parallax Effect Container */
+        .parallax-container {
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .parallax-element {
+            transition: transform 0.1s linear;
+        }
+        
+        /* Reveal animations for sections */
+        section {
+            opacity: 0;
+            transform: translateY(50px);
+            transition: all 1s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+        }
+        
+        section.revealed-section {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        /* Pulse on reveal */
+        .pulse-on-reveal {
+            transition: all 0.6s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+        }
+        .pulse-on-reveal.revealed {
+            animation: pulseReveal 0.6s ease;
+        }
+        
+        @keyframes pulseReveal {
+            0% { transform: scale(0.95); opacity: 0; }
+            50% { transform: scale(1.02); }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        
+        /* Reduce motion preference support */
+        @media (prefers-reduced-motion: reduce) {
+            .scroll-reveal,
+            .fade-up, .fade-down, .fade-left, .fade-right,
+            .zoom-in, .zoom-out, .rotate-in, .flip-x, .flip-y,
+            .bounce-in, .slide-ease, .blur-in,
+            section, .stagger-container > * {
+                transition: none !important;
+                animation: none !important;
+            }
+            .scroll-reveal, section {
+                opacity: 1 !important;
+                visibility: visible !important;
+                transform: none !important;
+            }
+        }
         /* ========== CUSTOM POINTER STYLES ========== */
         /* Main cursor circle */
         .custom-cursor {
@@ -6357,6 +6617,370 @@
     <div class="custom-cursor-ring" id="customCursorRing"></div>
 
     <script>
+                (function() {
+            'use strict';
+            
+            // ========== SCROLL ANIMATION MANAGER ==========
+            class ScrollAnimationManager {
+                constructor() {
+                    this.animatedElements = new Map();
+                    this.threshold = 0.15;
+                    this.rootMargin = '0px 0px -50px 0px';
+                    this.init();
+                }
+                
+                init() {
+                    // Create and add scroll progress bar
+                    this.createScrollProgressBar();
+                    
+                    // Setup intersection observer
+                    this.setupObserver();
+                    
+                    // Setup parallax effect
+                    this.setupParallax();
+                    
+                    // Add floating animations to elements with data-float attribute
+                    this.setupFloatingElements();
+                    
+                    // Add hover effects
+                    this.setupHoverEffects();
+                    
+                    // Initial check for elements already in view
+                    setTimeout(() => {
+                        this.checkElementsManually();
+                    }, 100);
+                    
+                    // Listen for dynamic content
+                    this.watchForDynamicContent();
+                }
+                
+                createScrollProgressBar() {
+                    if (!document.querySelector('.scroll-progress-bar')) {
+                        const progressBar = document.createElement('div');
+                        progressBar.className = 'scroll-progress-bar';
+                        document.body.appendChild(progressBar);
+                        
+                        window.addEventListener('scroll', () => {
+                            const winScroll = document.documentElement.scrollTop;
+                            const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+                            const scrolled = (winScroll / height) * 100;
+                            progressBar.style.width = scrolled + '%';
+                        });
+                    }
+                }
+                
+                setupObserver() {
+                    const options = {
+                        threshold: this.threshold,
+                        rootMargin: this.rootMargin
+                    };
+                    
+                    this.observer = new IntersectionObserver((entries) => {
+                        entries.forEach(entry => {
+                            if (entry.isIntersecting) {
+                                this.revealElement(entry.target);
+                                this.observer.unobserve(entry.target);
+                            }
+                        });
+                    }, options);
+                    
+                    // Observe all elements with scroll-reveal class or data-animate attribute
+                    this.observeAllAnimatedElements();
+                }
+                
+                observeAllAnimatedElements() {
+                    // Selectors for elements to animate
+                    const selectors = [
+                        '.scroll-reveal',
+                        '[data-animate]',
+                        '.stat-card',
+                        '.feature-card',
+                        '.plan-card',
+                        '.testimonial-card',
+                        '.quick-workout-card',
+                        '.seasonal-card',
+                        '.team-member',
+                        '.value-item',
+                        '.challenge-item',
+                        '.streak-item',
+                        '.weekly-progress-item',
+                        '.dashboard-card',
+                        '.motivation-card'
+                    ];
+                    
+                    const elements = document.querySelectorAll(selectors.join(','));
+                    elements.forEach(el => {
+                        // Add default animation class if not present
+                        if (!el.classList.contains('scroll-reveal') && !el.hasAttribute('data-animate')) {
+                            el.classList.add('scroll-reveal', 'fade-up');
+                        }
+                        this.observer.observe(el);
+                    });
+                    
+                    // Also observe all sections for section reveal
+                    document.querySelectorAll('section').forEach(section => {
+                        section.classList.add('scroll-reveal', 'slide-ease');
+                        this.observer.observe(section);
+                    });
+                }
+                
+                revealElement(element) {
+                    // Add revealed class
+                    element.classList.add('revealed');
+                    
+                    // Check for specific animation type from data attribute
+                    const animateType = element.getAttribute('data-animate');
+                    if (animateType) {
+                        element.classList.add(animateType);
+                    }
+                    
+                    // Add pop effect for cards
+                    if (element.classList.contains('stat-card') || 
+                        element.classList.contains('feature-card') ||
+                        element.classList.contains('plan-card')) {
+                        element.classList.add('pop-effect');
+                    }
+                    
+                    // Trigger custom event
+                    element.dispatchEvent(new CustomEvent('elementRevealed'));
+                }
+                
+                checkElementsManually() {
+                    // Manually check for elements that might have been missed
+                    const allElements = document.querySelectorAll('.scroll-reveal, [data-animate], section');
+                    allElements.forEach(el => {
+                        const rect = el.getBoundingClientRect();
+                        const windowHeight = window.innerHeight;
+                        if (rect.top < windowHeight - 100) {
+                            this.revealElement(el);
+                        }
+                    });
+                }
+                
+                setupParallax() {
+                    window.addEventListener('scroll', () => {
+                        const scrolled = window.pageYOffset;
+                        const parallaxElements = document.querySelectorAll('[data-parallax]');
+                        
+                        parallaxElements.forEach(el => {
+                            const speed = parseFloat(el.getAttribute('data-parallax')) || 0.3;
+                            const yPos = -(scrolled * speed);
+                            el.style.transform = `translateY(${yPos}px)`;
+                        });
+                    });
+                }
+                
+                setupFloatingElements() {
+                    // Add floating animation to elements with data-float attribute
+                    const floatElements = document.querySelectorAll('[data-float]');
+                    floatElements.forEach(el => {
+                        el.classList.add('float-animation');
+                        const duration = el.getAttribute('data-float-duration') || '3s';
+                        el.style.animationDuration = duration;
+                    });
+                }
+                
+                setupHoverEffects() {
+                    // Add wobble effect to buttons
+                    const buttons = document.querySelectorAll('.cta-button, .start-workout-btn, .filter-btn, .seasonal-tab');
+                    buttons.forEach(btn => {
+                        btn.classList.add('wobble-hover');
+                    });
+                }
+                
+                watchForDynamicContent() {
+                    const observer = new MutationObserver((mutations) => {
+                        mutations.forEach((mutation) => {
+                            if (mutation.addedNodes.length) {
+                                // Re-observe new elements
+                                setTimeout(() => {
+                                    this.observeAllAnimatedElements();
+                                    this.checkElementsManually();
+                                }, 100);
+                            }
+                        });
+                    });
+                    
+                    observer.observe(document.body, {
+                        childList: true,
+                        subtree: true
+                    });
+                }
+                
+                // Public method to manually refresh animations
+                refresh() {
+                    this.observeAllAnimatedElements();
+                    this.checkElementsManually();
+                }
+            }
+            
+            // ========== STAGGERED ANIMATION HELPER ==========
+            class StaggeredAnimation {
+                constructor(containerSelector, itemSelector, delayIncrement = 0.1) {
+                    this.container = document.querySelector(containerSelector);
+                    this.items = this.container ? this.container.querySelectorAll(itemSelector) : [];
+                    this.delayIncrement = delayIncrement;
+                    
+                    if (this.container && this.items.length) {
+                        this.init();
+                    }
+                }
+                
+                init() {
+                    this.container.classList.add('stagger-container');
+                    
+                    // Set transition delays
+                    this.items.forEach((item, index) => {
+                        item.style.transitionDelay = `${index * this.delayIncrement}s`;
+                    });
+                    
+                    // Observe container
+                    const observer = new IntersectionObserver((entries) => {
+                        entries.forEach(entry => {
+                            if (entry.isIntersecting) {
+                                this.container.classList.add('revealed');
+                                observer.unobserve(this.container);
+                            }
+                        });
+                    }, { threshold: 0.2 });
+                    
+                    observer.observe(this.container);
+                }
+            }
+            
+            // ========== COUNTER ANIMATION ==========
+            class CounterAnimation {
+                constructor(element, target, duration = 2000) {
+                    this.element = element;
+                    this.target = target;
+                    this.duration = duration;
+                    this.current = 0;
+                    this.animated = false;
+                    
+                    this.init();
+                }
+                
+                init() {
+                    const observer = new IntersectionObserver((entries) => {
+                        entries.forEach(entry => {
+                            if (entry.isIntersecting && !this.animated) {
+                                this.animated = true;
+                                this.animate();
+                                observer.unobserve(this.element);
+                            }
+                        });
+                    }, { threshold: 0.5 });
+                    
+                    observer.observe(this.element);
+                }
+                
+                animate() {
+                    const step = this.target / (this.duration / 16);
+                    const timer = setInterval(() => {
+                        this.current += step;
+                        if (this.current >= this.target) {
+                            this.element.textContent = this.target.toLocaleString();
+                            clearInterval(timer);
+                        } else {
+                            this.element.textContent = Math.floor(this.current).toLocaleString();
+                        }
+                    }, 16);
+                }
+            }
+            
+            // ========== INITIALIZE ALL ANIMATIONS ==========
+            document.addEventListener('DOMContentLoaded', () => {
+                // Initialize main scroll animation manager
+                window.scrollAnimations = new ScrollAnimationManager();
+                
+                // Initialize staggered animations for different containers
+                new StaggeredAnimation('.stats-container', '.stat-card', 0.08);
+                new StaggeredAnimation('.features-grid', '.feature-card', 0.08);
+                new StaggeredAnimation('.plans-container', '.plan-card', 0.1);
+                new StaggeredAnimation('.quick-workouts-grid', '.quick-workout-card', 0.1);
+                new StaggeredAnimation('.team-grid', '.team-member', 0.08);
+                new StaggeredAnimation('.values-grid', '.value-item', 0.08);
+                new StaggeredAnimation('.seasonal-cards', '.seasonal-card', 0.1);
+                
+                // Initialize counter animations for stat numbers
+                document.querySelectorAll('.stat-number, .counter-value, .weekly-progress-value').forEach(counter => {
+                    const targetText = counter.textContent;
+                    const target = parseInt(targetText.replace(/[^0-9]/g, ''));
+                    if (!isNaN(target) && target > 0) {
+                        const suffix = targetText.replace(/[0-9]/g, '');
+                        counter.setAttribute('data-suffix', suffix);
+                        counter.textContent = '0' + suffix;
+                        new CounterAnimation(counter, target, 1500);
+                    }
+                });
+                
+                // Add parallax to hero section
+                const heroSection = document.querySelector('.hero-enhanced, .hero');
+                if (heroSection) {
+                    heroSection.setAttribute('data-parallax', '0.2');
+                }
+                
+                // Add floating effect to icons and badges
+                document.querySelectorAll('.floating-icon, .workout-time-badge, .challenge-points').forEach(el => {
+                    el.setAttribute('data-float', 'true');
+                    el.setAttribute('data-float-duration', `${Math.random() * 2 + 2}s`);
+                });
+                
+                // Add pop-effect to CTA buttons
+                document.querySelectorAll('.cta-button, .start-workout-btn').forEach(btn => {
+                    btn.classList.add('pulse-on-reveal');
+                });
+                
+                console.log('Scroll animations initialized successfully!');
+            });
+            
+            // ========== ADD CUSTOM CSS FOR ADDITIONAL EFFECTS ==========
+            const style = document.createElement('style');
+            style.textContent = `
+                /* Smooth scroll behavior */
+                html {
+                    scroll-behavior: smooth;
+                }
+                
+                /* Scroll reveal for images */
+                img.scroll-reveal {
+                    transition: all 0.8s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+                }
+                
+                /* Card hover lift effect */
+                .stat-card, .feature-card, .plan-card, .quick-workout-card {
+                    transition: transform 0.4s cubic-bezier(0.2, 0.9, 0.4, 1.1), box-shadow 0.4s ease;
+                }
+                
+                .stat-card:hover, .feature-card:hover, .plan-card:hover, .quick-workout-card:hover {
+                    transform: translateY(-10px) scale(1.02);
+                    box-shadow: 0 25px 40px rgba(0, 0, 0, 0.15);
+                }
+                
+                /* Section transition effect */
+                section {
+                    transition: opacity 0.8s cubic-bezier(0.2, 0.9, 0.4, 1.1), transform 0.8s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+                }
+                
+                /* Loading animation for new content */
+                @keyframes fadeSlideIn {
+                    from {
+                        opacity: 0;
+                        transform: translateY(20px);
+                    }
+                    to {
+                        opacity: 1;
+                        transform: translateY(0);
+                    }
+                }
+                
+                .dynamic-content {
+                    animation: fadeSlideIn 0.5s ease forwards;
+                }
+            `;
+            document.head.appendChild(style);
+            
+        })();
         (function() {
             'use strict';
             

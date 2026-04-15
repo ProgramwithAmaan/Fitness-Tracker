@@ -6,7 +6,202 @@
     <title>BeeFit | Your Fitness Companion</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-                /* Base animation classes (initially hidden) */
+                /* ===== TYPING STATS ANIMATION STYLES ===== */
+        .hero-typing-stats {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin: 2rem 0;
+            flex-wrap: wrap;
+        }
+        
+        .typing-stat-card {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 1.2rem 1.8rem;
+            text-align: center;
+            min-width: 140px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.3s ease;
+            animation: fadeInUp 0.6s ease backwards;
+        }
+        
+        .typing-stat-card:nth-child(1) { animation-delay: 0.1s; }
+        .typing-stat-card:nth-child(2) { animation-delay: 0.2s; }
+        .typing-stat-card:nth-child(3) { animation-delay: 0.3s; }
+        .typing-stat-card:nth-child(4) { animation-delay: 0.4s; }
+        
+        .typing-stat-card:hover {
+            transform: translateY(-8px);
+            background: rgba(255, 255, 255, 0.25);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+        }
+        
+        .typing-stat-number {
+            font-size: 2.5rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #fff, #ff6b8b);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            display: inline-block;
+            font-family: 'Courier New', monospace;
+        }
+        
+        .typing-stat-label {
+            font-size: 0.85rem;
+            opacity: 0.9;
+            margin-top: 0.3rem;
+            display: block;
+            letter-spacing: 0.5px;
+        }
+        
+        /* Typing cursor effect for stats */
+        .typing-cursor {
+            display: inline-block;
+            width: 3px;
+            height: 1.2em;
+            background-color: #ff6b8b;
+            margin-left: 5px;
+            animation: blinkCursor 1s step-end infinite;
+            vertical-align: middle;
+        }
+        
+        @keyframes blinkCursor {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0; }
+        }
+        
+        /* Enhanced Hero Section with Typing Stats */
+        .hero-enhanced {
+            position: relative;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            color: white;
+            overflow: hidden;
+            background: linear-gradient(135deg, #0a0a2a, #1a1a3a);
+        }
+        
+        .hero-content-typing h1 {
+            font-size: 3.8rem;
+            margin-bottom: 1rem;
+            animation: fadeInUp 0.8s ease;
+        }
+        
+        .hero-subtitle-typing {
+            font-size: 1.3rem;
+            margin-bottom: 1.5rem;
+            opacity: 0.95;
+            animation: fadeInUp 0.8s ease 0.1s backwards;
+        }
+        
+        /* Floating particles background */
+        .floating-particles {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            z-index: 0;
+            pointer-events: none;
+        }
+        
+        .floating-particle {
+            position: absolute;
+            background: rgba(255, 107, 139, 0.3);
+            border-radius: 50%;
+            pointer-events: none;
+            animation: floatParticle linear infinite;
+        }
+        
+        @keyframes floatParticle {
+            0% {
+                transform: translateY(100vh) rotate(0deg);
+                opacity: 0;
+            }
+            10% {
+                opacity: 0.6;
+            }
+            90% {
+                opacity: 0.6;
+            }
+            100% {
+                transform: translateY(-100px) rotate(360deg);
+                opacity: 0;
+            }
+        }
+        
+        /* Floating icons animation */
+        .floating-fitness-icon {
+            position: absolute;
+            font-size: 2rem;
+            opacity: 0.15;
+            pointer-events: none;
+            animation: floatIcon 8s ease-in-out infinite;
+            z-index: 0;
+        }
+        
+        @keyframes floatIcon {
+            0% {
+                transform: translate(0, 0) rotate(0deg);
+            }
+            25% {
+                transform: translate(20px, -30px) rotate(5deg);
+            }
+            50% {
+                transform: translate(-15px, -50px) rotate(-3deg);
+            }
+            75% {
+                transform: translate(10px, -25px) rotate(4deg);
+            }
+            100% {
+                transform: translate(0, 0) rotate(0deg);
+            }
+        }
+        
+        /* Floating animation for cards */
+        .float-card {
+            animation: floatCard 4s ease-in-out infinite;
+        }
+        
+        @keyframes floatCard {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-8px); }
+            100% { transform: translateY(0px); }
+        }
+        
+        .float-card-delayed {
+            animation: floatCard 4s ease-in-out infinite 0.5s;
+        }
+        
+        .float-card-slow {
+            animation: floatCard 5s ease-in-out infinite 1s;
+        }
+        
+        /* Button pulse animation */
+        .start-journey-btn {
+            position: relative;
+            overflow: hidden;
+            animation: pulseGlow 2s infinite;
+        }
+        
+        @keyframes pulseGlow {
+            0% {
+                box-shadow: 0 0 0 0 rgba(255, 107, 139, 0.4);
+            }
+            70% {
+                box-shadow: 0 0 0 15px rgba(255, 107, 139, 0);
+            }
+            100% {
+                box-shadow: 0 0 0 0 rgba(255, 107, 139, 0);
+            }
+        }
+        /* Base animation classes (initially hidden) */
         .scroll-reveal {
             opacity: 0;
             visibility: hidden;
@@ -4846,7 +5041,50 @@
                
 
     <!-- Hero Section with Video -->
-    <section class="hero">
+    <!-- ===== ENHANCED HERO SECTION WITH TYPING STATS ===== -->
+    <section class="hero" id="hero">
+        <!-- Floating Particles Background -->
+        <div class="floating-particles" id="floatingParticles"></div>
+        
+        <!-- Floating Fitness Icons -->
+        <div class="floating-fitness-icon" style="top: 10%; left: 5%;">💪</div>
+        <div class="floating-fitness-icon" style="top: 70%; left: 85%; animation-duration: 7s;">🏃</div>
+        <div class="floating-fitness-icon" style="top: 30%; left: 90%; animation-duration: 9s;">🧘</div>
+        <div class="floating-fitness-icon" style="top: 80%; left: 10%; animation-duration: 6s;">🏋️</div>
+        <div class="floating-fitness-icon" style="top: 50%; left: 95%; animation-duration: 8s;">⚡</div>
+        <div class="floating-fitness-icon" style="top: 15%; left: 92%; animation-duration: 10s;">🔥</div>
+        <div class="floating-fitness-icon" style="top: 85%; left: 20%; animation-duration: 7.5s;">🎯</div>
+        
+        <div class="hero-overlay"></div>
+        <div class="hero-content">
+            <h1>Transform Your <span id="typedWord" style="color: #ff6b8b;"></span><span class="typing-cursor"></span></h1>
+            <p class="hero-subtitle-typing">Join <span id="memberCounter">0</span>+ active members reaching their fitness goals daily</p>
+            
+            <!-- Typing Stats Cards -->
+            <div class="hero-typing-stats">
+                <div class="typing-stat-card float-card">
+                    <span class="typing-stat-number" id="statWorkouts">0</span>
+                    <span class="typing-stat-label">+ Workouts</span>
+                </div>
+                <div class="typing-stat-card float-card-delayed">
+                    <span class="typing-stat-number" id="statCoaches">0</span>
+                    <span class="typing-stat-label">+ Expert Coaches</span>
+                </div>
+                <div class="typing-stat-card float-card-slow">
+                    <span class="typing-stat-number" id="statSatisfaction">0</span>
+                    <span class="typing-stat-label">% Satisfaction</span>
+                </div>
+                <div class="typing-stat-card float-card">
+                    <span class="typing-stat-number" id="statUsers">0</span>
+                    <span class="typing-stat-label">Active Users</span>
+                </div>
+            </div>
+            
+            <!-- Updated Button Text -->
+            <a href="#dashboard" class="cta-button start-journey-btn">Start Your Journey →</a>
+        </div>
+    </section>
+    <!-- <section class="hero">
         <video autoplay muted loop class="hero-video">
             <source src="video.mp4" type="video/mp4">
             Your browser does not support the video tag.
@@ -4857,7 +5095,7 @@
             <p>Track your workouts, monitor your diet, and achieve your goals with our all-in-one fitness platform.</p>
             <a href="#dashboard" class="cta-button">Get Started</a>
         </div>
-    </section>
+    </section> -->
 
     <!-- Dashboard Section -->
     <!-- Dashboard Section -->
@@ -6617,6 +6855,155 @@
     <div class="custom-cursor-ring" id="customCursorRing"></div>
 
     <script>
+                // TYPING ANIMATION + STATS COUNTER + FLOATING EFFECTS
+        // ============================================
+        
+        (function() {
+            'use strict';
+            
+            // ---------- TYPING WORD ANIMATION ----------
+            const words = ['Fitness Journey', 'Health Goals', 'Body Transformation', 'Active Lifestyle', 'Wellness Path'];
+            let wordIndex = 0;
+            let charIndex = 0;
+            let isDeleting = false;
+            const typedElement = document.getElementById('typedWord');
+            
+            function typeEffect() {
+                if (!typedElement) return;
+                const currentWord = words[wordIndex];
+                if (isDeleting) {
+                    typedElement.textContent = currentWord.substring(0, charIndex - 1);
+                    charIndex--;
+                } else {
+                    typedElement.textContent = currentWord.substring(0, charIndex + 1);
+                    charIndex++;
+                }
+                
+                if (!isDeleting && charIndex === currentWord.length) {
+                    isDeleting = true;
+                    setTimeout(typeEffect, 2000);
+                } else if (isDeleting && charIndex === 0) {
+                    isDeleting = false;
+                    wordIndex = (wordIndex + 1) % words.length;
+                    setTimeout(typeEffect, 500);
+                } else {
+                    setTimeout(typeEffect, isDeleting ? 50 : 100);
+                }
+            }
+            
+            // ---------- COUNTER ANIMATION FUNCTION ----------
+            function animateCounter(element, target, suffix = '') {
+                let current = 0;
+                const duration = 2000;
+                const step = target / (duration / 16);
+                const timer = setInterval(() => {
+                    current += step;
+                    if (current >= target) {
+                        element.textContent = target.toLocaleString() + suffix;
+                        clearInterval(timer);
+                    } else {
+                        element.textContent = Math.floor(current).toLocaleString() + suffix;
+                    }
+                }, 16);
+            }
+            
+            // ---------- INTERSECTION OBSERVER FOR COUNTERS ----------
+            const observerOptions = { threshold: 0.3, rootMargin: '0px' };
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const element = entry.target;
+                        const target = parseInt(element.getAttribute('data-target'));
+                        const suffix = element.getAttribute('data-suffix') || '';
+                        if (target && !element.classList.contains('animated')) {
+                            element.classList.add('animated');
+                            animateCounter(element, target, suffix);
+                        }
+                    }
+                });
+            }, observerOptions);
+            
+            // ---------- CREATE FLOATING PARTICLES ----------
+            function createFloatingParticles() {
+                const container = document.getElementById('floatingParticles');
+                if (!container) return;
+                
+                const particleCount = 50;
+                for (let i = 0; i < particleCount; i++) {
+                    const particle = document.createElement('div');
+                    particle.className = 'floating-particle';
+                    const size = Math.random() * 8 + 2;
+                    particle.style.width = size + 'px';
+                    particle.style.height = size + 'px';
+                    particle.style.left = Math.random() * 100 + '%';
+                    particle.style.animationDuration = Math.random() * 8 + 4 + 's';
+                    particle.style.animationDelay = Math.random() * 5 + 's';
+                    particle.style.background = `rgba(255, ${Math.random() * 100 + 55}, 100, ${Math.random() * 0.3 + 0.1})`;
+                    container.appendChild(particle);
+                }
+            }
+            
+            // ---------- CREATE ADDITIONAL FLOATING ICONS ----------
+            function createAdditionalFloatingIcons() {
+                const icons = ['💪', '🏃', '🧘', '🏋️', '⚡', '🔥', '🎯', '❤️', '⭐', '🌟'];
+                const heroSection = document.querySelector('.hero');
+                if (!heroSection) return;
+                
+                for (let i = 0; i < 15; i++) {
+                    const icon = document.createElement('div');
+                    icon.className = 'floating-fitness-icon';
+                    icon.textContent = icons[Math.floor(Math.random() * icons.length)];
+                    icon.style.top = Math.random() * 100 + '%';
+                    icon.style.left = Math.random() * 100 + '%';
+                    icon.style.fontSize = (Math.random() * 25 + 15) + 'px';
+                    icon.style.opacity = Math.random() * 0.15 + 0.05;
+                    icon.style.animationDuration = Math.random() * 10 + 5 + 's';
+                    icon.style.animationDelay = Math.random() * 5 + 's';
+                    heroSection.appendChild(icon);
+                }
+            }
+            
+            // ---------- INITIALIZE ALL ANIMATIONS ----------
+            document.addEventListener('DOMContentLoaded', () => {
+                // Start typing animation
+                setTimeout(typeEffect, 500);
+                
+                // Setup stat counters
+                const stats = [
+                    { id: 'statWorkouts', target: 12500, suffix: '+' },
+                    { id: 'statCoaches', target: 250, suffix: '+' },
+                    { id: 'statSatisfaction', target: 98, suffix: '%' },
+                    { id: 'statUsers', target: 50000, suffix: '+' }
+                ];
+                
+                stats.forEach(stat => {
+                    const element = document.getElementById(stat.id);
+                    if (element) {
+                        element.setAttribute('data-target', stat.target);
+                        element.setAttribute('data-suffix', stat.suffix);
+                        observer.observe(element);
+                    }
+                });
+                
+                // Member counter
+                const memberCounter = document.getElementById('memberCounter');
+                if (memberCounter) {
+                    memberCounter.setAttribute('data-target', '12500');
+                    observer.observe(memberCounter);
+                }
+                
+                // Create floating particles and icons
+                createFloatingParticles();
+                createAdditionalFloatingIcons();
+                
+                // Add floating animation to stat cards
+                document.querySelectorAll('.typing-stat-card').forEach((card, index) => {
+                    card.style.animation = `fadeInUp 0.6s ease ${index * 0.1}s backwards`;
+                });
+            });
+        })();
+
+        // -----------------------------------------------------------
                 (function() {
             'use strict';
             
